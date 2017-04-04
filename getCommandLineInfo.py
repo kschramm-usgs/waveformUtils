@@ -14,17 +14,24 @@ def getargs():
     parser = argparse.ArgumentParser(description = "Program to compare long-period event synthetics to data")
 
     parser.add_argument('-resDir',type=str, action = "store",
-                        dest="resDir", required=True,
-                        help="Result directory name Example: blah")
+                        dest="resDir", required=False,
+                        default = "temp",
+                        help="Result directory name Example: temp")
 
     parser.add_argument('-eventTime', type=str, action = "store",
-                         dest="eventTime", required=True,
+                         dest="eventTime", required=False,
+                         default ="2017-02-21T14:09:04",
                          help="Enter a UTC time, ie: 2017-02-21T14:09:04")
 
-    parser.add_argument('-eventLoc',type=str, action = "store",
-                         dest="eventLoc", required=True, nargs='*',
-                         default =['-19.284','-63.899','597'],
+    parser.add_argument('-eventLat',type=float, action = "store",
+                         dest="eventLat", required=False,
+                         default =-19.284,
                          help="Enter the lat, lon, depth for the event")
+
+    parser.add_argument('-eventLon',type=float, action = "store",
+                         dest="eventLon", required=False,
+                         default =-63.899,
+                         help="Enter the longitude for the event")
 
 #    parser.add_argument('-dir', type=str, action="store",
 #                         dest="dir", required=True, nargs="+",
@@ -32,17 +39,36 @@ def getargs():
 #                              "/home/user/put_stuff_here")
 
     parser.add_argument('-n', type=str, action="store",
-                         dest = "network", required=True,
+                         dest = "network", required=False,
+                         default="IU",
                          help="Network name Example: IU")
 
     parser.add_argument('-sta', type=str, action="store",
                         dest="sta", required = False,
+                        default = "ANMO",
                         help="Stations to use. Example with a \
                                 comma (,) separator : TUC,ANMO")
 
+    parser.add_argument('-staLat',type=float, action = "store",
+                         dest="staLat", required=False,
+                         default =34.945910,
+                         help="Enter the lat, lon, depth for the station")
+
+    parser.add_argument('-staLon',type=float, action = "store",
+                         dest="staLon", required=False,
+                         default =-106.4572,
+                         help="Enter the longitude for the station")
+
+
     parser.add_argument('-cha', type=str, action="store",
                         dest="cha", required = False,
-                        help="Channels to use. Example: BH*")
+                        default = "00",
+                        help="Channels to use. Example: 00")
+
+    parser.add_argument('-comp', type=str, action="store",
+                        dest="comp", required = False,
+                        default="BH*",
+                        help="Component to use. Example: BH*")
 
 #    parser.add_argument('-tslen', type=int, action="store",
 #                        dest="lents", required=False, default=4000.,
@@ -62,11 +88,3 @@ def getargs():
     parserval=parser.parse_args()
     return parserval
 
-# simple test of the system arguments:
-
-print 'Number of arguments: ', len(sys.argv), ' arguments' 
-print 'Argument List: ', str(sys.argv) 
-
-parserval = getargs()
-print eventLoc
-eventLat = parserval.eventLoc[0]

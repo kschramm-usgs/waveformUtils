@@ -9,8 +9,8 @@ endtime = UTCDateTime("2017-02-22")
 
 client = Client("IRIS")
 
-inventory = client.get_stations(network ="IU,US,CU,IW,II", latitude=eventLat, longitude = eventLon, maxradius = 20, starttime = starttime, endtime = endtime)
-inventory = client.get_stations(network ="IU,US,CU,IW,II", latitude=eventLat, longitude = eventLon, maxradius = 20, starttime = starttime, endtime = endtime, level="response")
+inventory = client.get_stations(network ="_GSN", latitude=eventLat, longitude = eventLon, maxradius = 20, starttime = starttime, endtime = endtime)
+#inventory = client.get_stations(network ="IU,US,CU,IW,II", latitude=eventLat, longitude = eventLon, maxradius = 20, starttime = starttime, endtime = endtime, level="response")
 
 print(inventory)
 

@@ -1,6 +1,6 @@
 #!/bin/env python
 # to load, use: from returnStationEventAzimuth import returnStationEventAzimuth
-def returnStationEventAzimuth(staLat,staLon,eqLat,eqLon):
+def returnDistDeg(staLat,staLon,eqLat,eqLon):
     '''This function returns the Azimuth when given the location parameters
        of an event and station.'''
     from obspy.geodetics.base import locations2degrees
@@ -23,12 +23,7 @@ def returnStationEventAzimuth(staLat,staLon,eqLat,eqLon):
 # get the distance between the earthquake and station in degrees
     DegDist = locations2degrees(staLat, staLon, eqLat, eqLon)
 
-# get the station azimuth, back az and distance in meters...
-    StatAzim = gps2dist_azimuth(eqLat, eqLon, staLat, staLon)
-
 # print the result
     print 'The distance between the station and earthquake is: '+str(DegDist)
-    print 'The azimuth between the station and earthquake is: '+str(StatAzim[1])
-    print 'The azimuth between the earthquake and station is: '+str(StatAzim[2])
 
-    return StatAzim;
+    return DegDist;
