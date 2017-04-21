@@ -33,6 +33,11 @@ def getargs():
                          default =-63.899,
                          help="Enter the longitude for the event")
 
+    parser.add_argument('-eventDepth',type=float, action = "store",
+                         dest="eventDepth", required=False,
+                         default =597,
+                         help="Enter the depth for the event")
+
 #    parser.add_argument('-dir', type=str, action="store",
 #                         dest="dir", required=True, nargs="+",
 #                         help="Directory location Example: " + \

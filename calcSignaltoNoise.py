@@ -9,19 +9,24 @@ from obspy.geodetics.base import gps2dist_azimuth
 from obspy.taup import TauPyModel
 import numpy as np
 import matplotlib.pyplot as plt
+from getCommandLineInfo import getargs
 
 client = Client("IRIS")
 
 # this is a deep earthquake in bolivia
-t = UTCDateTime("2017-02-21T14:09:04")
-eventTime = UTCDateTime("2017-02-21T14:09:04")
-eventLat=-19.281
-eventLon=-63.905
-eventDepth = 597.
+parservals = getargs()
+t = parservals.eventTime
+eventTime = parservals.eventTime
+eventLat=parservals.eventLat
+eventLon=parservals.eventLon
+eventDepth =parservals.eventDepth
 
-inventory = client.get_stations(network="IU", station="ANMO",
-                                channel="BH1", level="response",
+inventory = client.get_stations(network=parservals.network, 
+                                station=parservals.sta,
+                                channel=parservals.cha, 
+                                level="response",
                                 starttime=eventTime)
+
 model = TauPyModel(model="iasp91")
 
 # to plot up all the stations...
