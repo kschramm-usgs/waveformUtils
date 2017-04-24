@@ -8,13 +8,16 @@
 #          or
 #           /msd
 #        depending on how long since the event passed.
+#
+#        this gets info for only one station.  
+#
 #        from Adam Ringler
 #    """
 
 from obspy.clients.fdsn import Client
 from obspy import UTCDateTime
 from obspy.taup import TauPyModel
-from obspy import read
+from obspy.core import *
 import glob
 
 # event time - this can be calculate based on the p-wave arrival
@@ -35,13 +38,12 @@ stLon = -106.457200
 stDepth = -1820
 
 net = "IU"
-sta = "ANMO"
+sta = ["ANMO"]
 chan = "00"
 comp = "BH*"
 debug="True"
 
 # Current default is LH add BH later
-chan = 'BH*'
 
 #if (net in set(['GT'])) or (sta == 'KBL'):
 #    chan = 'BH'
@@ -56,31 +58,24 @@ for dataloc in datalocs:
     for year in range(stime.year, etime.year+1):
         for day in range(stime.julday, etime.julday+1):
             string = dataloc + net + '_' + sta + '/' + \
-                    str(year) + '/' + str(day).zfill(3) + \
-                    '/*'+ chan + '*.seed'
+                    str(year) + '/*' + str(day).zfill(3)+\
+                    '/*'+ chan + '*'+comp+'*.seed'
+
             print(string)
-            #string = glob.glob(string)
-            #print(string)
-            #print(string)
-            #files += glob.glob(string)
-if debug:
-    print(files)
-#st = Stream()
+            files += glob.glob(string)
+            print(string+ '/*'+ chan + '*'+comp+'*.seed')
+            print(files)
+            
+
+# needed: from obspy.core import * for the following line to work
+st = Stream()
 for curfile in files:
-#    try:
-    print('trying to read in file: '+ curfile)
-    st = read(curfile)
-# in regular python I can get this to work... but I don't understand why it is not working here
-# from obspy import read
-#st = read('/msd/IU_ANMO/2017/052/*BH**.seed')
-# are the quotes missing without the glob.glob expansion?  but I was having problems with Adam's
-# st += read(curfile)... which may go away if this is a function def again.  It could be the 
-# standalone case that is the problem.  I could really use Austin!
-    print(stime)
-#        st += read(curfile, starttime=stime, endtime=etime)
-#    except:
-#        if debug:
-#        print 'Unable to get data ' + curfile
+    try:
+        print('trying to read in file: '+ curfile)
+        st += read(curfile, starttime=stime, endtime=etime)
+    except:
+        if debug:
+            print 'Unable to get data ' + curfile
 ##st.merge(fill_value='latest')
 st.plot()
 if debug:
