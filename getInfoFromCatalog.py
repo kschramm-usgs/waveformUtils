@@ -29,5 +29,9 @@ for event in EventCatalog:
     print(event.origins[0]['time'])
     time = event.origins[0]['time']
     doy=time.julday
+    evLat=event.origins[0]['latitude']
+    evLon=event.origins[0]['longitude']
+    print ('Event lat, lon: '+str(evLat)+', '+str(evLon))
     print doy
+
     

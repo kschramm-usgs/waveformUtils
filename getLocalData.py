@@ -28,20 +28,11 @@ pWaveArrTime = 652
 stime = eventTime+pWaveArrTime
 etime = stime+60
 
-evMag = 6.5
-evDepth = 597.9
-evLat = -19.284
-evLon = 63.899
-
 stLat = 34.945910
 stLon = -106.457200
 stDepth = -1820
 
-net = "IU"
-sta = ["ANMO"]
-chan = "00"
-comp = "BH*"
-debug="True"
+EventCatalog = getEvents4Station(staLat,staLon,startTime,endTime,minRad,maxRad,minMag)
 
 # Current default is LH add BH later
 
@@ -81,3 +72,5 @@ st.plot()
 if debug:
         print 'We have data'
 #return st
+
+
