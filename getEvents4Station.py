@@ -2,6 +2,7 @@
 
 from obspy import UTCDateTime
 from obspy.clients.fdsn import Client
+from obspy.core.event import Origin
 import returnDistDeg
 
 stLat = 34.945910
@@ -24,6 +25,11 @@ EventCatalog = client.get_events(starttime=startTime,endtime=endTime,\
                                  minradius=25, maxradius=90, \
                                  minmagnitude=6.0)
 
+print(EventCatalog)
 for event in EventCatalog:
-    print(event.origins[1])
+    print(event.origins[0]['time'])
+    print(event.times)
+    #print(event.origins.time)
+    #print(origins.time)
+    #print(event[1])
 
