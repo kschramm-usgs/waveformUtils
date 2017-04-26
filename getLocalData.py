@@ -1,6 +1,8 @@
 #!/bin/env python
 
-#def getdata(net, sta, eventtime, lents, debug=False):
+#def getdata(net, staLat, staLon,beginTime,endTime,):
+# we should take some of this stuff out because we are doing too
+# many things in one piece of code
 #    """
 #        This function goes to both archives and gets the data.
 #        At ASL the archives are located in:
@@ -18,44 +20,77 @@ from obspy.clients.fdsn import Client
 from obspy import UTCDateTime
 from obspy.taup import TauPyModel
 from obspy.core import *
+from obspy.geodetics.base import locations2degrees
 import glob
+from getEvents4Station import getEvents4Station
+from getPwaveArrival import getPwaveArrival
+from numpy import array
 
 # event time - this can be calculate based on the p-wave arrival
 # this is for an event in Bolivia
 
-eventTime = UTCDateTime("2017-02-21T14:09:04.000")
-pWaveArrTime = 652
-stime = eventTime+pWaveArrTime
-etime = stime+60
+#eventTime = UTCDateTime("2017-02-21T14:09:04.000")
+#pWaveArrTime = 652
+#stime = eventTime+pWaveArrTime
+#etime = stime+60
+#set time to search for events.
+begintime=UTCDateTime("2017-02-01")
+endtime=UTCDateTime.now()
 
-stLat = 34.945910
-stLon = -106.457200
-stDepth = -1820
+net = "IU"
+sta= "ANMO"
+staLat = 34.945910
+staLon = -106.457200
+staDepth = -1820
+chan = "00"
+comp = "BH*"
 
-EventCatalog = getEvents4Station(staLat,staLon,startTime,endTime,minRad,maxRad,minMag)
+minRad=25
+maxRad=90
+minMag=6.0
 
-# Current default is LH add BH later
 
-#if (net in set(['GT'])) or (sta == 'KBL'):
-#    chan = 'BH'
+EventCatalog = getEvents4Station(staLat,staLon,begintime,endtime,minRad,maxRad,minMag)
+print(EventCatalog.count())
+
+#need to get data based on event arrival time
+# step 1. calculate station/event distance
+# step 2. calc phase arrival time
+dataStart=[]
+dataEnd=[]
+for event in EventCatalog:
+    evLat=event.origins[0]['latitude']
+    evLon=event.origins[0]['longitude']
+    evDepth=event.origins[0]['depth']/1000.0
+    DegDist = locations2degrees(staLat,staLon,evLat,evLon)
+    pTime = getPwaveArrival(evDepth,DegDist)
+    dataStart += [event.origins[0]['time']+pTime-10]
+    dataEnd += [event.origins[0]['time']+pTime+60]
+    
+for date in dataStart:
+    print(date.year)
+#put in check for day
+#if stime.julday != etime.julday:
+#    print('End time on different day, need to merge seismograms.')
 
 #changing this to be off of msd - don't want to deal w/ tr1 paths
 # Grab the data locations
-datalocs = ['/msd/']
+dataloc = '/msd/'
 
 files = []
-# Grab the files and deal with edge cases
-for dataloc in datalocs:
-    for year in range(stime.year, etime.year+1):
-        for day in range(stime.julday, etime.julday+1):
-            string = dataloc + net + '_' + sta + '/' + \
-                    str(year) + '/*' + str(day).zfill(3)+\
-                    '/*'+ chan + '*'+comp+'*.seed'
+# this is not looping over the events... need to get it plotting a
+# wavefore for each event.
+for stime in dataStart:
+    for etime in dataEnd: 
+        #why are there data overlaps?
+        string = dataloc + net + '_' + sta + '/' + \
+                str(stime.year) + '/*' + str(stime.julday).zfill(3)+\
+                '/*'+ chan + '*'+comp+'*.seed'
 
-            print(string)
-            files += glob.glob(string)
-            print(string+ '/*'+ chan + '*'+comp+'*.seed')
-            print(files)
+        print(string)
+        files += glob.glob(string)
+        print(string+ '/*'+ chan + '*'+comp+'*.seed')
+        print(files)
             
 
 # needed: from obspy.core import * for the following line to work
@@ -69,8 +104,8 @@ for curfile in files:
             print 'Unable to get data ' + curfile
 ##st.merge(fill_value='latest')
 st.plot()
-if debug:
-        print 'We have data'
+#if debug:
+#        print 'We have data'
 #return st
 
 
