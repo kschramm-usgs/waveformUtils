@@ -51,13 +51,14 @@ minMag=6.0
 
 
 EventCatalog = getEvents4Station(staLat,staLon,begintime,endtime,minRad,maxRad,minMag)
-print(EventCatalog.count())
+print("There are "+ str(EventCatalog.count()) + " events in the catalog")
 
 #need to get data based on event arrival time
 # step 1. calculate station/event distance
 # step 2. calc phase arrival time
 dataStart=[]
 dataEnd=[]
+numEvents=0
 for event in EventCatalog:
     evLat=event.origins[0]['latitude']
     evLon=event.origins[0]['longitude']
@@ -66,9 +67,15 @@ for event in EventCatalog:
     pTime = getPwaveArrival(evDepth,DegDist)
     dataStart += [event.origins[0]['time']+pTime-10]
     dataEnd += [event.origins[0]['time']+pTime+60]
+    numEvents = numEvents+1
+
+print(len(dataStart))
     
+count =0
 for date in dataStart:
     print(date.year)
+    count =count+1
+print("This is the count from the dataStart: "+str(count))
 #put in check for day
 #if stime.julday != etime.julday:
 #    print('End time on different day, need to merge seismograms.')
@@ -78,34 +85,35 @@ for date in dataStart:
 dataloc = '/msd/'
 
 files = []
+st = Stream()
 # this is not looping over the events... need to get it plotting a
 # wavefore for each event.
 for stime in dataStart:
     for etime in dataEnd: 
+        print stime,etime
         #why are there data overlaps?
         string = dataloc + net + '_' + sta + '/' + \
-                str(stime.year) + '/*' + str(stime.julday).zfill(3)+\
-                '/*'+ chan + '*'+comp+'*.seed'
+            str(stime.year) + '/*' + str(stime.julday).zfill(3)+\
+            '/*'+ chan + '*'+comp+'*.seed'
 
-        print(string)
-        files += glob.glob(string)
-        print(string+ '/*'+ chan + '*'+comp+'*.seed')
-        print(files)
-            
+        #print(string)
+        fileName = glob.glob(string)
+        #print(string+ '/*'+ chan + '*'+comp+'*.seed')
+        #print(fileName)
+        
+        #print("Files is this long: "+str(len(files)))
 
 # needed: from obspy.core import * for the following line to work
-st = Stream()
-for curfile in files:
-    try:
-        print('trying to read in file: '+ curfile)
-        st += read(curfile, starttime=stime, endtime=etime)
-    except:
-        if debug:
-            print 'Unable to get data ' + curfile
+        for curfile in fileName:
+            try:
+                #print('trying to read in file: '+ str(curfile))
+                st += read(curfile, starttime=stime, endtime=etime)
+            except:
+                continue
+                #if debug:
+                #print( 'Unable to get data ' + str(fileName))
 ##st.merge(fill_value='latest')
-st.plot()
+#st.plot()
 #if debug:
 #        print 'We have data'
 #return st
-
-
