@@ -1,31 +1,35 @@
 #!/bin/env python
 
-from obspy import UTCDateTime
-from obspy.core import *
-import glob
+def getMSDdata(station,network,channel,component,stime,etime):
+    ''' This function returns a stream from /msd '''
 
-stime=UTCDateTime('2017-02-18T12:20:54.656944Z')
-etime=UTCDateTime('2017-02-18T12:22:04.656944Z')
+    from obspy import UTCDateTime
+    from obspy.core import *
+    import glob
 
-station = "ANMO"
-channel = "00"
-component = "BH"
-net = "IU"
-dataloc="/msd/"
+    #stime=UTCDateTime('2017-02-18T12:20:54.656944Z')
+    #etime=UTCDateTime('2017-02-18T12:22:04.656944Z')
+    #
+    #station = "ANMO"
+    #channel = "00"
+    #component = "BH"
+    #network = "IU"
 
-st = Stream()
+    dataloc="/msd/"
 
-string = dataloc + net + '_' + station + '/' + \
-         str(stime.year) + '/*' + str(stime.julday).zfill(3)+\
-         '/*' + channel + '*' + component + '*.seed'
+    st = Stream()
 
-fileName=glob.glob(string)
+    string = dataloc + network + '_' + station + '/' + \
+             str(stime.year) + '/*' + str(stime.julday).zfill(3)+\
+             '/*' + channel + '*' + component + '*.seed'
 
-for curfile in fileName:
-    try:
-        st += read(curfile,starttime=stime,endtime=etime)
+    fileName=glob.glob(string)
 
-    except:
-        print('Unable to open file: '+ curfile)
+    for curfile in fileName:
+        try:
+            st += read(curfile,starttime=stime,endtime=etime)
 
-st.plot()
+        except:
+            print('Unable to open file: '+ curfile)
+
+    return st

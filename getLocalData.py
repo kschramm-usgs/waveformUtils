@@ -25,6 +25,7 @@ import glob
 from getEvents4Station import getEvents4Station
 from getPwaveArrival import getPwaveArrival
 from numpy import array
+from getMSDdata import getMSDdata
 
 # event time - this can be calculate based on the p-wave arrival
 # this is for an event in Bolivia
@@ -56,64 +57,62 @@ print("There are "+ str(EventCatalog.count()) + " events in the catalog")
 #need to get data based on event arrival time
 # step 1. calculate station/event distance
 # step 2. calc phase arrival time
-dataStart=[]
-dataEnd=[]
-numEvents=0
+#dataStart=[]
+#dataEnd=[]
 for event in EventCatalog:
     evLat=event.origins[0]['latitude']
     evLon=event.origins[0]['longitude']
     evDepth=event.origins[0]['depth']/1000.0
     DegDist = locations2degrees(staLat,staLon,evLat,evLon)
     pTime = getPwaveArrival(evDepth,DegDist)
-    dataStart += [event.origins[0]['time']+pTime-10]
-    dataEnd += [event.origins[0]['time']+pTime+60]
-    numEvents = numEvents+1
-
-print(len(dataStart))
+    dataStart = event.origins[0]['time']+pTime-10
+    dataEnd = event.origins[0]['time']+pTime+60
+    print(dataStart.year)
     
-count =0
-for date in dataStart:
-    print(date.year)
-    count =count+1
-print("This is the count from the dataStart: "+str(count))
-#put in check for day
-#if stime.julday != etime.julday:
-#    print('End time on different day, need to merge seismograms.')
+    dataStream=getMSDdata(sta,net,chan,comp,dataStart,dataEnd)
+    dataStream.plot()
 
-#changing this to be off of msd - don't want to deal w/ tr1 paths
-# Grab the data locations
-dataloc = '/msd/'
-
-files = []
-st = Stream()
-# this is not looping over the events... need to get it plotting a
-# wavefore for each event.
-for stime in dataStart:
-    for etime in dataEnd: 
-        print stime,etime
-        #why are there data overlaps?
-        string = dataloc + net + '_' + sta + '/' + \
-            str(stime.year) + '/*' + str(stime.julday).zfill(3)+\
-            '/*'+ chan + '*'+comp+'*.seed'
-
-        #print(string)
-        fileName = glob.glob(string)
-        #print(string+ '/*'+ chan + '*'+comp+'*.seed')
-        #print(fileName)
-        
-        #print("Files is this long: "+str(len(files)))
-
-# needed: from obspy.core import * for the following line to work
-        for curfile in fileName:
-            try:
-                #print('trying to read in file: '+ str(curfile))
-                st += read(curfile, starttime=stime, endtime=etime)
-            except:
-                continue
-                #if debug:
-                #print( 'Unable to get data ' + str(fileName))
-##st.merge(fill_value='latest')
-#st.plot()
-#if debug:
-#        print 'We have data'
-#return st
+    
+##count =0
+#for date in dataStart:
+#    print(date.year)
+#    count =count+1
+##put in check for day
+##if stime.julday != etime.julday:
+##    print('End time on different day, need to merge seismograms.')
+#
+##changing this to be off of msd - don't want to deal w/ tr1 paths
+## Grab the data locations
+#dataloc = '/msd/'
+#
+## this is not looping over the events... need to get it plotting a
+## wavefore for each event.
+#for stime in dataStart:
+#    for etime in dataEnd: 
+#        print stime,etime
+#        #why are there data overlaps?
+#        string = dataloc + net + '_' + sta + '/' + \
+#            str(stime.year) + '/*' + str(stime.julday).zfill(3)+\
+#            '/*'+ chan + '*'+comp+'*.seed'
+#
+#        #print(string)
+#        fileName = glob.glob(string)
+#        #print(string+ '/*'+ chan + '*'+comp+'*.seed')
+#        #print(fileName)
+#        
+#        #print("Files is this long: "+str(len(files)))
+#
+## needed: from obspy.core import * for the following line to work
+#        for curfile in fileName:
+#            try:
+#                #print('trying to read in file: '+ str(curfile))
+#                st += read(curfile, starttime=stime, endtime=etime)
+#            except:
+#                continue
+#                #if debug:
+#                #print( 'Unable to get data ' + str(fileName))
+###st.merge(fill_value='latest')
+##st.plot()
+##if debug:
+##        print 'We have data'
+#####return st
