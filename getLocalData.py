@@ -26,6 +26,7 @@ from getEvents4Station import getEvents4Station
 from getPwaveArrival import getPwaveArrival
 from numpy import array
 from getMSDdata import getMSDdata
+from getTR1data import getTR1data
 
 # event time - this can be calculate based on the p-wave arrival
 # this is for an event in Bolivia
@@ -35,7 +36,7 @@ from getMSDdata import getMSDdata
 #stime = eventTime+pWaveArrTime
 #etime = stime+60
 #set time to search for events.
-begintime=UTCDateTime("2017-02-01")
+begintime=UTCDateTime("2017-05-27")
 endtime=UTCDateTime.now()
 
 net = "IU"
@@ -69,7 +70,8 @@ for event in EventCatalog:
     dataEnd = event.origins[0]['time']+pTime+60
     print(dataStart.year)
     
-    dataStream=getMSDdata(sta,net,chan,comp,dataStart,dataEnd)
+    #dataStream=getMSDdata(sta,net,chan,comp,dataStart,dataEnd)
+    dataStream=getTR1data(sta,net,chan,comp,dataStart,dataEnd)
     dataStream.plot()
 
     
