@@ -6,18 +6,18 @@ from obspy.core import *
 from obspy import read
 import glob
 
-stime=UTCDateTime('2017-166T22:46:00.0Z')
-etime=UTCDateTime('2017-167T02:52:00.0Z')
+stime=UTCDateTime('2017-207T20:00:00.0Z')
+etime=UTCDateTime('2017-208T04:15:00.0Z')
 
 print(stime.julday)
 print(etime.julday)
     
 
-network = "XX"
-station = "MOFO"
-channel = "50"
-component = "BHZ"
-prefix = 'LF'
+network = "IU"
+station = "TUC"
+channel = "*"
+component = "BC6"
+prefix = 'RAN'
 
 dataloc="/tr1/telemetry_days/"
 #    /tr1/telemetry_days/XX_FBA1/2017/2017_151
