@@ -6,18 +6,18 @@ from obspy.core import *
 from obspy import read
 import glob
 
-stime=UTCDateTime('2017-207T20:00:00.0Z')
-etime=UTCDateTime('2017-208T04:15:00.0Z')
+stime=UTCDateTime('2017-242T13:38:00.0Z')
+etime=UTCDateTime('2017-242T13:53:00.0Z')
 
 print(stime.julday)
 print(etime.julday)
     
 
-network = "IU"
-station = "TUC"
-channel = "*"
-component = "BC6"
-prefix = 'RAN'
+network = "XX"
+station = "TPNV"
+channel = "CB"
+component = "BC0"
+prefix = 'HF'
 
 dataloc="/tr1/telemetry_days/"
 #    /tr1/telemetry_days/XX_FBA1/2017/2017_151
@@ -35,6 +35,7 @@ st = Stream()
 for curfile in fileName:
     try:
         if stime.julday != etime.julday:
+            print('reading in file: '+curfile)
             st += read(curfile)
         else:
             st += read(curfile,starttime=stime,endtime=etime)
