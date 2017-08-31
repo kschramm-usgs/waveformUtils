@@ -15,11 +15,13 @@ inventory = client.get_stations(network ="_GSN", latitude=eventLat, longitude = 
 
 print(inventory)
 
-net = inventory[0]
-print(net)
-sta = net[0]
-print(sta)
+
+#net = inventory[0]
+for net in inventory[0]:
+    print(net)
+    for sta in net[0]:
+        print(sta)
 # this is only the first channel, if you have requested more than one channel
-cha = sta[0]
-print(cha)
+#cha = sta[0]
+#print(cha)
 
