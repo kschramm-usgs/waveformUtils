@@ -25,4 +25,11 @@ cut='cut'
 fileIn=prefix+"_"+station+"_"+channel + "_" + component +".512."+cut+".seed"
 fileOut=prefix+"_"+station+"_"+channel + "_" + component +".512."+other+".seed"
 
-shift_time_of_file(fileIn, fileOut, 0.005)
+shift_time_of_file(fileIn, fileOut, 10000)
+
+st = read(fileOut)
+st.plot()
+tr=st[0]
+st.write(fileOut,format="MSEED")
+
+print(tr.stats.starttime)
